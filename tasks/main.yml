@@ -1,0 +1,46 @@
+---
+# tasks file for docker_install
+
+- name: Install Docker dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Install Docker
+  package:
+    name: docker-ce
+    state: present
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Build Docker image
+  docker_image:
+    path: "{{ dockerfile_directory }}"
+    name: "{{ docker_image_name }}"
+  when: build_dockerfile
+
+- name: Create Dockerfile from template
+  template:
+    src: Dockerfile.j2
+    dest: "{{ dockerfile_directory }}/Dockerfile"
+  when: build_dockerfile
+

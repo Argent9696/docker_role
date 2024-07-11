@@ -1,0 +1,10 @@
+---
+# defaults file for docker_install
+build_dockerfile: false
+dockerfile_directory: /path/to/dockerfile
+docker_image_name: my_docker_image
+base_image: ubuntu:latest
+packages:
+  - curl
+  - vim
+command: /bin/bash
